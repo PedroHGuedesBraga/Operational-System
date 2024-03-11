@@ -27,13 +27,79 @@ public class MemoryManager {
 		
 	}
 	private void WriteUsingWorstFit(Process p) {
-		// TODO Auto-generated method stub
-		
+	    int worstFitStart = -1;
+	    int worstFitEnd = -1;
+	    int worstFitSize = -1;
+
+	    int currentStart = -1;
+	    int currentSize = 0;
+
+	    for (int i = 0; i < physicMemory.length; i++) {
+	        if (physicMemory[i] == null) {
+	            if (currentStart == -1) {
+	                currentStart = i;
+	            }
+	            currentSize++;
+	        } else {
+	            if (currentStart != -1 && currentSize >= p.getSizeInMemory()) {
+	                if (currentSize > worstFitSize) {
+	                    worstFitStart = currentStart;
+	                    worstFitEnd = i - 1;
+	                    worstFitSize = currentSize;
+	                }
+	                currentStart = -1;
+	                currentSize = 0;
+	            }
+	        }
+	    }
+
+	    if (worstFitStart != -1 && worstFitSize >= p.getSizeInMemory()) {
+	        AdressMemory address = new AdressMemory(worstFitStart, worstFitEnd);
+	        insertProcessInMemory(p, address);
+	    } else {
+	        System.out.println("Não há espaço suficiente para o processo " + p.getId());
+	    }
+
+	    printMemoryStatus();
 	}
+
 	private void WriteUsingBestFit(Process p) {
-		// TODO Auto-generated method stub
-		
+	    int bestFitStart = -1;
+	    int bestFitEnd = -1;
+	    int bestFitSize = Integer.MAX_VALUE;
+
+	    int currentStart = -1;
+	    int currentSize = 0;
+
+	    for (int i = 0; i < physicMemory.length; i++) {
+	        if (physicMemory[i] == null) {
+	            if (currentStart == -1) {
+	                currentStart = i;
+	            }
+	            currentSize++;
+	        } else {
+	            if (currentStart != -1 && currentSize >= p.getSizeInMemory()) {
+	                if (currentSize < bestFitSize) {
+	                    bestFitStart = currentStart;
+	                    bestFitEnd = i - 1;
+	                    bestFitSize = currentSize;
+	                }
+	                currentStart = -1;
+	                currentSize = 0;
+	            }
+	        }
+	    }
+
+	    if (bestFitStart != -1 && bestFitSize >= p.getSizeInMemory()) {
+	        AdressMemory address = new AdressMemory(bestFitStart, bestFitEnd);
+	        insertProcessInMemory(p, address);
+	    } else {
+	        System.out.println("Não há espaço suficiente para o processo " + p.getId());
+	    }
+
+	    printMemoryStatus();
 	}
+
 	private void WriteUsingFirstFit(Process p) {
 		int actualSize = 0;
 		for(int i = 0; i < physicMemory.length; i++) {
