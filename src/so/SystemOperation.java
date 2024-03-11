@@ -28,15 +28,18 @@ public class SystemOperation {
 	public static void setSchedule(Schedule schedule) {
 		SystemOperation.schedule = schedule;
 	}
-	public static Object systemCall(SystemCallType type, Process p) {
-		if(type.equals(SystemCallType.WRITE_PROCESS)) {
-			//Escrever 
+	public static Process SystemCall(SystemCallType type, Process p) {
+		if(type.equals(SystemCallType.WRITE)) {
+			mm.write(p);
 			
 		}
-		else if(type.equals(SystemCallType.DELETE_PROCESS)) {
-	
+		else if(type.equals(SystemCallType.READ)) {
+			
 		}
-		else if(type.equals(SystemCallType.CREATE_PROCESS)) {
+		else if(type.equals(SystemCallType.DELETE)) {
+			mm.delete(p);
+		}
+		else if(type.equals(SystemCallType.CREATE)) {
 			if(cm == null) {
 				cm = new CpuManager();
 			}
@@ -44,8 +47,8 @@ public class SystemOperation {
 				mm = new MemoryManager(Strategy.FIRST_FIT);
 			}
 			return new Process();
-		}
-		return null;
+			
+		} return null;
 	}
 	
 	
