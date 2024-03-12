@@ -26,77 +26,118 @@ public class MemoryManager {
 		// TODO Auto-generated method stub
 		
 	}
-	private void WriteUsingWorstFit(Process p) {
-	    int worstFitStart = -1;
-	    int worstFitEnd = -1;
-	    int worstFitSize = -1;
+	
+	private void WriteUsingBestFit(Process p) {
+	    int bestFitStart = -1; // Índice de início do melhor ajuste encontrado
+	    int bestFitEnd = -1;   // Índice de fim do melhor ajuste encontrado
+	    int bestFitSize = Integer.MAX_VALUE; // Tamanho do melhor ajuste encontrado
 
-	    int currentStart = -1;
-	    int currentSize = 0;
+	    int currentStart = -1; // Índice de início do bloco de memória atualmente em análise
+	    int currentSize = 0;   // Tamanho do bloco de memória atualmente em análise
 
+	    // Iterar sobre todo o array de memória física
 	    for (int i = 0; i < physicMemory.length; i++) {
+	        // Verificar se a posição atual está vazia
 	        if (physicMemory[i] == null) {
+	            // Se a posição atual estiver vazia, incrementamos o tamanho do bloco atual
 	            if (currentStart == -1) {
+	                // Atualizamos o início do bloco
 	                currentStart = i;
 	            }
+	            // Incrementar o tamanho do bloco
 	            currentSize++;
 	        } else {
-	            if (currentStart != -1 && currentSize >= p.getSizeInMemory()) {
+	            // Verificar se o bloco atual é um melhor ajuste
+	            if (currentSize >= p.getSizeInMemory() && currentSize < bestFitSize) {
+	                // Atualizar o melhor ajuste encontrado até agora
+	                bestFitStart = currentStart;
+	                bestFitEnd = i - 1;
+	                bestFitSize = currentSize;
+	            }
+	            // Resetar as variáveis para procurar um novo bloco livre
+	            currentStart = -1;
+	            currentSize = 0;
+	        }
+	    }
+
+	    // Verificar se o último bloco é um melhor ajuste
+	    if (currentStart != -1 && currentSize < bestFitSize) {
+	        bestFitStart = currentStart;
+	        bestFitEnd = physicMemory.length - 1;
+	        bestFitSize = currentSize;
+	    }
+
+	    // Após a iteração, o melhor ajuste foi encontrado.
+	    // Verificar se há espaço adequado para o processo
+	    if (bestFitStart != -1 && bestFitSize >= p.getSizeInMemory()) {
+	        // Se o tamanho do melhor ajuste for maior ou igual ao tamanho do processo,
+	        // encontramos um espaço adequado.
+	        AdressMemory address = new AdressMemory(bestFitStart, bestFitEnd);
+	        insertProcessInMemory(p, address);
+	    } else {
+	        // Se não houver espaço adequado, imprime uma mensagem de erro
+	        System.out.println("Não há espaço suficiente para o processo " + p.getId());
+	    }
+
+	    // Agora podemos atualizar o status da memória
+	    printMemoryStatus();
+	}
+
+	private void WriteUsingWorstFit(Process p) {
+	    int worstFitStart = -1; // Índice de início do pior ajuste encontrado
+	    int worstFitEnd = -1;   // Índice de fim do pior ajuste encontrado
+	    int worstFitSize = -1;  // Tamanho do pior ajuste encontrado
+
+	    int currentStart = -1; // Índice de início do bloco de memória atualmente em análise
+	    int currentSize = 0;   // Tamanho do bloco de memória atualmente em análise
+
+	    // Iterar sobre todo o array de memória física
+	    for (int i = 0; i < physicMemory.length; i++) {
+	        // Verificar se a posição atual está vazia
+	        if (physicMemory[i] == null) {
+	            // Se a posição atual estiver vazia, incrementamos o tamanho do bloco atual
+	            if (currentStart == -1) {
+	                // Atualizamos o início do bloco
+	                currentStart = i;
+	            }
+	            // Incrementar o tamanho do bloco
+	            currentSize++;
+	        } else {
+	            // Verificar se o bloco atual é o pior ajuste
+	            if (currentStart != -1) {
+	                // Atualizar o pior ajuste encontrado até agora
 	                if (currentSize > worstFitSize) {
 	                    worstFitStart = currentStart;
 	                    worstFitEnd = i - 1;
 	                    worstFitSize = currentSize;
 	                }
+	                // Resetar as variáveis para procurar um novo bloco livre
 	                currentStart = -1;
 	                currentSize = 0;
 	            }
 	        }
 	    }
 
+	    // Verificar se o último bloco é o pior ajuste
+	    if (currentStart != -1 && currentSize > worstFitSize) {
+	        worstFitStart = currentStart;
+	        worstFitEnd = physicMemory.length - 1;
+	        worstFitSize = currentSize;
+	    }
+
+	    // Após a iteração, o pior ajuste foi encontrado.
+	    // Verificar se há espaço adequado para o processo
 	    if (worstFitStart != -1 && worstFitSize >= p.getSizeInMemory()) {
+	        // Se o tamanho do pior ajuste for maior ou igual ao tamanho do processo,
+	        // encontramos um espaço adequado.
 	        AdressMemory address = new AdressMemory(worstFitStart, worstFitEnd);
 	        insertProcessInMemory(p, address);
 	    } else {
+	        // Se não houver espaço adequado, imprime uma mensagem de erro
 	        System.out.println("Não há espaço suficiente para o processo " + p.getId());
 	    }
 
-	    printMemoryStatus();
-	}
-
-	private void WriteUsingBestFit(Process p) {
-	    int bestFitStart = -1;
-	    int bestFitEnd = -1;
-	    int bestFitSize = Integer.MAX_VALUE;
-
-	    int currentStart = -1;
-	    int currentSize = 0;
-
-	    for (int i = 0; i < physicMemory.length; i++) {
-	        if (physicMemory[i] == null) {
-	            if (currentStart == -1) {
-	                currentStart = i;
-	            }
-	            currentSize++;
-	        } else {
-	            if (currentStart != -1 && currentSize >= p.getSizeInMemory()) {
-	                if (currentSize < bestFitSize) {
-	                    bestFitStart = currentStart;
-	                    bestFitEnd = i - 1;
-	                    bestFitSize = currentSize;
-	                }
-	                currentStart = -1;
-	                currentSize = 0;
-	            }
-	        }
-	    }
-
-	    if (bestFitStart != -1 && bestFitSize >= p.getSizeInMemory()) {
-	        AdressMemory address = new AdressMemory(bestFitStart, bestFitEnd);
-	        insertProcessInMemory(p, address);
-	    } else {
-	        System.out.println("Não há espaço suficiente para o processo " + p.getId());
-	    }
-
+	    // Agora podemos atualizar o status da memória
 	    printMemoryStatus();
 	}
 
@@ -133,7 +174,8 @@ public class MemoryManager {
 		}
 		printMemoryStatus();
 	}
-	private void printMemoryStatus() {
+	
+    private void printMemoryStatus() {
 		for(int i = 0; i < physicMemory.length; i++) {
 			System.out.print(physicMemory[i] + " / ");
 			
@@ -141,11 +183,23 @@ public class MemoryManager {
 		
 	}
 	private void insertProcessInMemory(Process p, AdressMemory adress) {
-		for (int i = adress.getStart(); i<= adress.getEnd(); i++) {
-			this.physicMemory[i] = p.getId();
-		}
-		
+	    int size = p.getSizeInMemory();
+	    int start = adress.getStart();
+	    int end = adress.getEnd();
+	    
+	    for (int i = start; i <= end; i++) {
+	        // Verifica se o processo cabe na memória restante
+	        if (size > 0) {
+	            this.physicMemory[i] = p.getId();
+	            size--;
+	        } else {
+	        	System.out.println("Memory Full");
+	            break; 
+	        }
+	    }
 	}
+
+
 	public void delete(Process p) {
 		
 	}
