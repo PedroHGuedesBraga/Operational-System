@@ -193,7 +193,6 @@ public class MemoryManager {
 	            this.physicMemory[i] = p.getId();
 	            size--;
 	        } else {
-	        	System.out.println("Memory Full");
 	            break; 
 	        }
 	    }

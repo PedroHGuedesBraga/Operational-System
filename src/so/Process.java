@@ -21,6 +21,11 @@ public class Process {
 		this.sizeInMemory = givenList.get(rand.nextInt(givenList.size())); 
 		
 	}
+	//public Process(int sizeInMemory) {
+		//this();
+		//this.sizeInMemory = sizeInMemory;
+	//}
+	
 	public String getId() {
 		return id;
 	}
