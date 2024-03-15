@@ -28,7 +28,7 @@ public class SystemOperation {
 	public static void setSchedule(Schedule schedule) {
 		SystemOperation.schedule = schedule;
 	}
-	public static Process SystemCall(SystemCallType type, Process p) {
+	public static Process SystemCall(SystemCallType type, Process p, int sizeInMemory) {
 		if(type.equals(SystemCallType.WRITE)) {
 			mm.write(p);
 			
@@ -46,7 +46,7 @@ public class SystemOperation {
 			if(mm == null) {
 				mm = new MemoryManager(Strategy.BEST_FIT);
 			}
-			return new Process();
+			return new Process(sizeInMemory);
 			
 		} return null;
 	}

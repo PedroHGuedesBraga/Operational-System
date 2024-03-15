@@ -74,6 +74,7 @@ public class MemoryManager {
 	        // encontramos um espaço adequado.
 	        AdressMemory address = new AdressMemory(bestFitStart, bestFitEnd);
 	        insertProcessInMemory(p, address);
+	        printMemoryStatus();
 	    } else {
 	        // Se não houver espaço adequado, imprime uma mensagem de erro
 	        System.out.println("Não há espaço suficiente para o processo " + p.getId());
@@ -143,6 +144,7 @@ public class MemoryManager {
 
 	private void WriteUsingFirstFit(Process p) {
 		int actualSize = 0;
+		boolean processIsFit = false;
 		for(int i = 0; i < physicMemory.length; i++) {
 			if(i == physicMemory.length - 1) {
 			 if(actualSize >0) {
@@ -150,9 +152,10 @@ public class MemoryManager {
 				 int end = i;
 				 AdressMemory adress = new AdressMemory(start,end);
 				 if(p.getSizeInMemory()<= adress.getSize()) {
+					processIsFit = true;
 				 	insertProcessInMemory(p,adress);
-				 	break;
-				 	}
+				 	printMemoryStatus();
+				 }
 			 }
 			}
 		    else if(physicMemory[i] == null) {
@@ -163,6 +166,7 @@ public class MemoryManager {
 					int end = i ;
 					AdressMemory adress = new AdressMemory(start,end);
 					if(p.getSizeInMemory() <= adress.getSize()) {
+						processIsFit = true;
 						insertProcessInMemory(p,adress);
 						break;
 						
@@ -172,7 +176,11 @@ public class MemoryManager {
 			}
 			
 		}
-		printMemoryStatus();
+		if(processIsFit) {
+			printMemoryStatus();			
+		} else {
+			System.out.println("Não há espaço sulficiente em memória");
+		}
 	}
 	
     private void printMemoryStatus() {
@@ -185,14 +193,15 @@ public class MemoryManager {
 	private void insertProcessInMemory(Process p, AdressMemory adress) {
 	    int size = p.getSizeInMemory();
 	    int start = adress.getStart();
-	    int end = adress.getEnd();
+	    int end = start + size;
 	    
-	    for (int i = start; i <= end; i++) {
+	    for (int i = start; i < end; i++) {
 	        // Verifica se o processo cabe na memória restante
 	        if (size > 0) {
 	            this.physicMemory[i] = p.getId();
 	            size--;
 	        } else {
+	    
 	            break; 
 	        }
 	    }
@@ -200,7 +209,14 @@ public class MemoryManager {
 
 
 	public void delete(Process p) {
-		
+	    for (int i = 0; i < physicMemory.length; i++) {
+	        if (physicMemory[i] != null && physicMemory[i].equals(p.getId())) {
+	        	System.out.println(physicMemory[i]);
+	            physicMemory[i] = null;
+	        }
+	    }
 	}
+
+
 
 }

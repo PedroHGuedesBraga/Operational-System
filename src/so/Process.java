@@ -14,18 +14,13 @@ public class Process {
 	//private int timeToExecution;
 	private AdressMemory adressInMemory;
 	
-	public Process() {
-		Random rand = new Random();
+	public Process(int size) {
+		//Random rand = new Random();
 		this.id = UUID.randomUUID().toString();
-		List<Integer> givenList = Arrays.asList(1,2,4,5,8,10,20,50,100);
-		this.sizeInMemory = givenList.get(rand.nextInt(givenList.size())); 
+		//List<Integer> givenList = Arrays.asList(1,2,4,5,8,10,20,50,100);
+		this.sizeInMemory = size;//givenList.get(rand.nextInt(givenList.size())); 
 		
 	}
-	//public Process(int sizeInMemory) {
-		//this();
-		//this.sizeInMemory = sizeInMemory;
-	//}
-	
 	public String getId() {
 		return id;
 	}
