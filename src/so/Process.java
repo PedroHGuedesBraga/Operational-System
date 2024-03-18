@@ -14,9 +14,9 @@ public class Process {
 	//private int timeToExecution;
 	private AdressMemory adressInMemory;
 	
-	public Process(int size) {
+	public Process( String id,int size) {
 		//Random rand = new Random();
-		this.id = UUID.randomUUID().toString();
+		this.id = id;
 		//List<Integer> givenList = Arrays.asList(1,2,4,5,8,10,20,50,100);
 		this.sizeInMemory = size;//givenList.get(rand.nextInt(givenList.size())); 
 		
