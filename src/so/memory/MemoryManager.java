@@ -1,15 +1,30 @@
 package so.memory;
 
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.List;
+
 import so.Process;
 import so.SystemOperation;
 
 public class MemoryManager {
-	private String[] physicMemory;
+	private String[] physicalMemory;
+	private Hashtable <String,List<FrameMemory>> logicalMemory;
 	private Strategy strategy;
+	private int pageSize;
 
 	public MemoryManager(Strategy strategy) {
+		this.pageSize =2;
 		this.strategy = strategy;
-		physicMemory = new String[128];
+		physicalMemory = new String[128];
+		this.logicalMemory = new Hashtable<>();
+	}
+	//Sobrecarga de construtores 9:57 paginação parte II  
+	public MemoryManager(Strategy strategy, int pageSize) {
+		this(strategy);
+		this.pageSize = pageSize;
+		
+		
 	}
 
 	public void write(Process p) {
@@ -25,156 +40,79 @@ public class MemoryManager {
 	}
 
 	private void writeUsingPaging(Process p) {
-		// TODO Auto-generated method stub
+		List<FrameMemory> frames = this.getFrames(p);
+		for(int i = 0; i< frames.size(); i++) {
+			FrameMemory actuallyFrame = frames.get(i);
+			for(int j = actuallyFrame.getPageNum();j<actuallyFrame.getDisplacement(); j++  ) {
+				this.physicalMemory[j] = p.getId();
+				
+			}
+			
+		}
+		this.logicalMemory.put(p.getId(), frames);
+	}
+	
+	private List<FrameMemory> getFrames(Process p){
+		int processSize= 0;
+		List<FrameMemory> frames = new ArrayList<>();
+		for (int page = 0; page < this.physicalMemory.length;page+= this.pageSize) {
+			if(this.physicalMemory[page] == null) {
+				frames.add(new FrameMemory(page,this.pageSize));
+				processSize+= this.pageSize;
+				int spaceInPages = (frames.size() * this.pageSize);
+				
+				if(processSize <= spaceInPages) {
+					return frames;
+				}
+			}
+		}
+		return null;
+	}
+	//NO video ele pos como private void, porém ele da erro no System call Type, pois o metodo não fica acessivel, pus ele como public.
+	public void delete(Process p) {
+		List<FrameMemory> frames = this.logicalMemory.get(p.getId());
+		for(int i = 0; i< frames.size(); i++) {
+			FrameMemory actuallyFrame = frames.get(i);
+			for(int j = actuallyFrame.getPageNum();j<actuallyFrame.getDisplacement(); j++  ) {
+				this.physicalMemory[j] = null;
+				
+			}
+		}
+		
+		
 	}
 
 	private void writeUsingBestFit(Process p) {
-		int bestFitStart = -1;
-		int bestFitEnd = -1;
-		int bestFitSize = Integer.MAX_VALUE;
-
-		int currentStart = -1;
-		int currentSize = 0;
-
-		for (int i = 0; i < physicMemory.length; i++) {
-			if (physicMemory[i] == null) {
-				if (currentStart == -1) {
-					currentStart = i;
-				}
-				currentSize++;
-			} else {
-				if (currentSize >= p.getSizeInMemory() && currentSize < bestFitSize) {
-					bestFitStart = currentStart;
-					bestFitEnd = i - 1;
-					bestFitSize = currentSize;
-				}
-				currentStart = -1;
-				currentSize = 0;
-			}
-		}
-
-		if (currentSize >= p.getSizeInMemory() && currentSize < bestFitSize) {
-			bestFitStart = currentStart;
-			bestFitEnd = physicMemory.length - 1;
-			bestFitSize = currentSize;
-		}
-
-		if (bestFitStart != -1 && bestFitSize >= p.getSizeInMemory()) {
-			AdressMemory address = new AdressMemory(bestFitStart, bestFitEnd);
-			insertProcessInMemory(p, address);
-		} else {
-			System.out.println("Não há espaço suficiente para o processo " + p.getId());
-		}
-
-		printMemoryStatus();
-		System.out.println();
+		
 	}
 
-	private void writeUsingWorstFit(Process p) {
-		int worstFitStart = -1;
-		int worstFitEnd = -1;
-		int worstFitSize = -1;
-
-		int currentStart = -1;
-		int currentSize = 0;
-
-		for (int i = 0; i < physicMemory.length; i++) {
-			if (physicMemory[i] == null) {
-				if (currentStart == -1) {
-					currentStart = i;
-				}
-				currentSize++;
-			} else {
-				if (currentStart != -1) {
-					if (currentSize > worstFitSize) {
-						worstFitStart = currentStart;
-						worstFitEnd = i - 1;
-						worstFitSize = currentSize;
-					}
-					currentStart = -1;
-					currentSize = 0;
-				}
-			}
-		}
-
-		if (currentStart != -1 && currentSize > worstFitSize) {
-			worstFitStart = currentStart;
-			worstFitEnd = physicMemory.length - 1;
-			worstFitSize = currentSize;
-		}
-
-		if (worstFitStart != -1 && worstFitSize >= p.getSizeInMemory()) {
-			AdressMemory address = new AdressMemory(worstFitStart, worstFitEnd);
-			insertProcessInMemory(p, address);
-		} else {
-			System.out.println("Não há espaço suficiente para o processo " + p.getId());
-		}
-
-		printMemoryStatus();
-		System.out.println();
-	}
+	private void writeUsingWorstFit(Process p) { }
+		
 
 	private void writeUsingFirstFit(Process p) {
-		int actualSize = 0;
-		for (int i = 0; i < physicMemory.length; i++) {
-			if (i == physicMemory.length - 1) {
-				if (actualSize > 0) {
-					int start = i - actualSize;
-					int end = i;
-					AdressMemory adress = new AdressMemory(start, end);
-					if (p.getSizeInMemory() <= adress.getSize()) {
-						insertProcessInMemory(p, adress);
-					}
-				}
-			} else if (physicMemory[i] == null) {
-				actualSize++;
-			} else {
-				if (actualSize > 0) {
-					int start = i - actualSize;
-					int end = i;
-					AdressMemory adress = new AdressMemory(start, end);
-					if (p.getSizeInMemory() <= adress.getSize()) {
-						insertProcessInMemory(p, adress);
-						break;
-					} else {
-						System.out.println("Não há espaço suficiente para o processo " + p.getId());
-					}
-				}
-				actualSize = 0;
-			}
-		}
-
-		printMemoryStatus();
-		System.out.println();
 
 	}
 
-	private void printMemoryStatus() {
-		for (int i = 0; i < physicMemory.length; i++) {
-			System.out.print(physicMemory[i] + " / ");
+	/*private void printMemoryStatus() {
+		for (int i = 0; i < physicalMemory.length; i++) {
+			System.out.print(physicalMemory[i] + " / ");
 		}
-	}
+	}/*
 
-	private void insertProcessInMemory(Process p, AdressMemory adress) {
+	/*private void insertProcessInMemory(Process p, AdressMemory adress) {
 		int size = p.getSizeInMemory();
 		int start = adress.getStart();
 		int end = start + size;
 
 		for (int i = start; i < end; i++) {
 			if (size > 0) {
-				this.physicMemory[i] = p.getId();
+				this.physicalMemory[i] = p.getId();
 				size--;
 			} else {
 				break;
 			}
 		}
-	}
+	}*/
 
-	public void delete(Process p) {
-		for (int i = 0; i < physicMemory.length; i++) {
-			if (physicMemory[i] != null && physicMemory[i].equals(p.getId())) {
-				physicMemory[i] = null;
-			}
-		}
-	}
+	
 }
