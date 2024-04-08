@@ -1,5 +1,5 @@
 package so.schedule;
 
-public class Schedule {
+public class Priority {
 
 }

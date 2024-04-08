@@ -1,14 +1,16 @@
 package so;
 
+import java.util.List;
+
 import so.cpu.CpuManager;
 import so.memory.MemoryManager;
 import so.memory.Strategy;
-import so.schedule.Schedule;
+import so.schedule.Scheduler;
 
 public class SystemOperation {
     private static MemoryManager mm;
     private static CpuManager cm;
-    private static Schedule schedule;
+    private static Scheduler schedule;
     public static int PAGE_SIZE = 4;
     public static int MEMORY_SIZE = 256;
 
@@ -27,12 +29,15 @@ public class SystemOperation {
            
         }
 
-    public static void SystemCall(SystemCallType type, Process p) {
+    public static List<SubProcess> SystemCall(SystemCallType type, Process p) {
         if (type.equals(SystemCallType.WRITE_PROCESS)) {
             mm.writeProcess(p);
 
         } else if (type.equals(SystemCallType.DELETE_PROCESS)) {
             mm.delete(p);
-        } 
+        } else if(type.equals(SystemCallType.READ_PROCESS)) {
+        	return mm.read();
+        }
+        return null;
     }
 }

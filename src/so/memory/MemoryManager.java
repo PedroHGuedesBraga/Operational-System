@@ -88,5 +88,11 @@ public class MemoryManager {
 		
 	}
 
+
+	public List<SubProcess> read() {
+		return null;
+		
+	}
+
 	
 }

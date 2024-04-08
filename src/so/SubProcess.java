@@ -1,15 +1,23 @@
 package so;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
+
 public class SubProcess {
 	private String processId;
 	private String id;
 	private int instructions;
+	private int timeToExeceute;
 	public static int count;
 	
 	public SubProcess(String processId,int instructions){
 		this.processId = processId;
 		this.id = processId+count++;
 		this.instructions = instructions;
+		Random rand = new Random();
+		List<Integer>givenList = Arrays.asList(100,200,300,400,500,600,700,800,900,1000,2000);
+		this.timeToExeceute = givenList.get(rand.nextInt(givenList.size()));
 		count++;
 	}
 	public String getProcessId() {
@@ -30,5 +38,9 @@ public class SubProcess {
 	public void setInstructions(int instructions) {
 		this.instructions = instructions;
 	}
+	public int getTimeToExeceute() {
+		return timeToExeceute;
+	}
+	
 	
 }
