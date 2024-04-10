@@ -7,31 +7,21 @@ import so.SubProcess;
 import so.SystemCallType;
 import so.SystemOperation;
 import so.Process;
+
 public class FCFS extends SchedulerQueue{
 
 	public FCFS() {
-		super(getComparator()); // TODO Auto-generated constructor stub
-	}
-
-	private static Comparator<SubProcess> getComparator() {
-			return new Comparator<SubProcess>() {
+		super(new Comparator<Process>() {
 			
 			@Override
-			public int compare(SubProcess sp1, SubProcess sp2) {
+			public int compare(Process sp1, Process sp2) {
 				return -1;
 			}
-		};
+		}); // TODO Auto-generated constructor stub
 	}
 
-	@Override
-	public void execute(Process p) {
-		List<SubProcess> processes = SystemOperation.SystemCall(SystemCallType.READ_PROCESS, p);
-	}
 
-	@Override
-	public void finish(Process p) {
-		// TODO Auto-generated method stub
-		
-	} 
+	
+	
 
 }

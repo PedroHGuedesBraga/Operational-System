@@ -25,7 +25,7 @@ public class MemoryManager {
 	}
 
 
-	public void writeProcess(Process p) {
+	public void write(Process p) {
 		this.writeUsingPaging(p);
 	}
 
@@ -89,9 +89,14 @@ public class MemoryManager {
 	}
 
 
-	public List<SubProcess> read() {
-		return null;
-		
+	public List<SubProcess> read(Process p) {
+		List<String> ids = p.getSubProcesses();
+		List<SubProcess> sps = new LinkedList<>();
+		for(String id : ids) {
+			FrameMemory fm = this.logicalMemory.get(id);
+			sps.add(this.physicalMemory[fm.getPageNum()][fm.getOffset()]);
+		}
+		return sps;
 	}
 
 	

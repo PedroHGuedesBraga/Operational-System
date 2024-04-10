@@ -10,6 +10,8 @@ public class SubProcess {
 	private int instructions;
 	private int timeToExeceute;
 	public static int count;
+	private ProcessPriority priorityProcess;
+	
 	
 	public SubProcess(String processId,int instructions){
 		this.processId = processId;
@@ -18,6 +20,10 @@ public class SubProcess {
 		Random rand = new Random();
 		List<Integer>givenList = Arrays.asList(100,200,300,400,500,600,700,800,900,1000,2000);
 		this.timeToExeceute = givenList.get(rand.nextInt(givenList.size()));
+		
+		List<ProcessPriority>priorityList = Arrays.asList(ProcessPriority.BAIXA,ProcessPriority.MEDIA,ProcessPriority.ALTA,ProcessPriority.ALTISSIMA);
+		this.priorityProcess = priorityList.get(rand.nextInt(priorityList.size()));
+		
 		count++;
 	}
 	public String getProcessId() {
@@ -40,6 +46,9 @@ public class SubProcess {
 	}
 	public int getTimeToExeceute() {
 		return timeToExeceute;
+	}
+	public ProcessPriority getPriorityProcess() {
+		return priorityProcess;
 	}
 	
 	
