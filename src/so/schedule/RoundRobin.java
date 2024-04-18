@@ -1,12 +1,7 @@
 package so.schedule;
 
-import java.util.Comparator;
-
-import so.Process;
-import so.SubProcess;
-
-public class RoundRobin extends SchedulerQueue{
-	private int quantum;
+public class RoundRobin {
+/*	private int quantum;
 	public RoundRobin() {
 		super(new Comparator<Process>() {
 			
@@ -19,5 +14,5 @@ public class RoundRobin extends SchedulerQueue{
 	}
 
 
-
+*/
 }

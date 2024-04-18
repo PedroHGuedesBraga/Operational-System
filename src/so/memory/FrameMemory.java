@@ -1,8 +1,8 @@
 package so.memory;
 
 public class FrameMemory {
-	private int pageNum;
-	private int offset;
+	private int pageNum ;
+	private int offset ;
 	
 	
 	public FrameMemory(int pageNum, int offset) {

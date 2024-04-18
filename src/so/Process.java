@@ -1,39 +1,39 @@
 package so;
 
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Random;
-import java.util.UUID;
-
-import so.memory.AdressMemory;
 
 public class Process {
 	private String id;
 	private int sizeInMemory;
 	private List<String>subProcesses;
 	public static int count;
-	//private int timeToExecution;
-	//private AdressMemory adressInMemory;
+	private int timeToExecute;
+	private int priorityProcess;
 	
-	public Process(int size) {
+
+	public Process(int size, int priority, int timeToExecute) {
 		count++;
 		this.id = "P"+ count;
 		this.sizeInMemory = size;
 		this.subProcesses = this.getSubProcesses();
+		this.timeToExecute = timeToExecute;
+		this.priorityProcess = priority;
 	}
 	
 	
 	public List<String> getSubProcesses() {
-		if(this.subProcesses == null|| this.subProcesses.isEmpty()) {
-			this.subProcesses = new LinkedList<String>();
-			for(int i = 0; i<this.sizeInMemory; i++) {
-				//GAMBIARRA
-				String spId = this.getId() + i; 
-			this.subProcesses.add(spId);
-			}	
-		} return this.subProcesses;
+	    if (this.subProcesses == null || this.subProcesses.isEmpty()) {
+	        this.subProcesses = new LinkedList<String>();
+	        for (int i = 0; i < this.sizeInMemory; i++) {
+	            String spId = this.getId() + i;
+	            this.subProcesses.add(spId);
+	        }
+	    }
+	    return this.subProcesses;
 	}
+
+
 
 	
 	public String getId() {
@@ -47,6 +47,13 @@ public class Process {
 	}
 	public void setSizeInMemory(int sizeInMemory) {
 		this.sizeInMemory = sizeInMemory;
+	}
+	
+	public int getTimeToExecute() {
+		return timeToExecute;
+	}
+	public int getPriorityProcess() {
+		return priorityProcess;
 	}
 	
 	

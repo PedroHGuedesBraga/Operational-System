@@ -17,6 +17,11 @@ public class Core implements Runnable  {
 	public void run() {
 		count += numOfInstructions;
 		if(count>= actuallyProcess.getInstructions()) {
+			
+			if (this.actuallyProcess != null) {
+				
+				System.out.println(this.actuallyProcess.getId());
+			}
 			this.finish();
 		}
 	}

@@ -1,27 +1,32 @@
 package so.schedule;
 
 import java.util.Comparator;
-import java.util.List;
 
-import so.SubProcess;
-import so.SystemCallType;
-import so.SystemOperation;
 import so.Process;
+import so.SubProcess;
 
-public class FCFS extends SchedulerQueue{
+public class FCFS extends SchedulerQueue {
 
 	public FCFS() {
 		super(new Comparator<Process>() {
-			
+
 			@Override
-			public int compare(Process sp1, Process sp2) {
-				return -1;
+			public int compare(Process p1, Process p2) {
+				return p2.getPriorityProcess() - p1.getPriorityProcess();
 			}
-		}); // TODO Auto-generated constructor stub
+		});
 	}
 
+	@Override
+	public SubProcess execute() {
+		if (this.queue != null) {
 
-	
-	
+			if (this.subProcesses != null) {
+				return this.subProcesses.poll();
+			}
+		}
+
+		return null;
+	}
 
 }
